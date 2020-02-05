@@ -32,7 +32,7 @@ void loop() {
   if(WiFi.status() == WL_CONNECTED){  
       getHttpData();
   }
-  delay(50000);
+  delay(30000);
 }
 
 void loadDefaultValues(){
@@ -56,7 +56,7 @@ void initializedConnection(){
   }
 }
 
-String getHttpData(){
+void getHttpData(){
   HTTPClient http;
   int httpCode = 0;
   String payload = "";
@@ -67,10 +67,7 @@ String getHttpData(){
   if (httpCode > 0) {
     payload = http.getString();
     Serial.print(payload);
-    delay(5000);
   }
 
   http.end();
-
-  return payload;
 }

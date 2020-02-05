@@ -3,18 +3,19 @@
 SoftwareSerial mySerial(2,3); //RX TX
 
 int id =0;
-boolean is_mobile_app = false;
-int cups_of_rice = 0;
-int rice_type = 0;
-double rice_water_scale = 0;
+boolean isMobileApp = false;
+int cupsOfRiceSelected = 0;
+int riceTypeSelected = 0;
+double scaleOfRiceWater = 0;
     
 void setup() {
   Serial.begin(9600);
   mySerial.begin(9600);
-  delay(500);
+  delay(5000);
 }
 
 void loop() {
+  //temporary must be getHttpData()
   String payloadString = "";
   payloadString = String("[{\"Id\":1,\"IsMobileApp\":true,\"CupsOfRice\":5,\"RiceType\":1,\"IsDoneCooking\":false,\"IsRiceLevelLow\":false,\"IsWaterLevelLow\":false,\"RiceDistance\":\"0\",\"WaterDistance\":\"0\",\"RiceWaterScale\":\"0\"}]");
   separateKeyValueJSONPairs(payloadString);
@@ -22,11 +23,14 @@ void loop() {
 }
 
 void getHttpData(){
-  String IncomingString="";
-
+  String payloadString = "";
   if(mySerial.available()){
-    IncomingString =  mySerial.readString();
-    Serial.println("Received String: " + IncomingString);
+    payloadString =  mySerial.readString();
+
+    if(payloadString.length() > 1){
+      separateKeyValueJSONPairs(payloadString);
+      delay(2000);
+    }
   }
 }
 
@@ -42,18 +46,18 @@ void separateKeyValueJSONPairs(String payload){
     }
 
     id = doc[0]["Id"];
-    is_mobile_app = doc[0]["IsMobileApp"];
-    cups_of_rice = doc[0]["CupsOfRice"];
-    rice_type = doc[0]["RiceType"];
-    rice_water_scale = doc[0]["RiceWaterScale"];
+    isMobileApp = doc[0]["IsMobileApp"];
+    cupsOfRiceSelected = doc[0]["CupsOfRice"];
+    riceTypeSelected = doc[0]["RiceType"];
+    scaleOfRiceWater = doc[0]["RiceWaterScale"];
 
     Serial.println("Id: " + String(id));
     delay(3000);
-    Serial.println("IsMobileApp: " + String(is_mobile_app));
+    Serial.println("isMobileApp: " + String(isMobileApp));
     delay(3000);
-    Serial.println("CupsOfRice: " + String(cups_of_rice));
+    Serial.println("cupsOfRiceSelected: " + String(cupsOfRiceSelected));
     delay(3000);
-    Serial.println("RiceType: " + String(rice_type));
+    Serial.println("riceTypeSelected: " + String(riceTypeSelected));
     delay(3000);
-    Serial.println("RiceWaterScale: " + String(rice_water_scale));
+    Serial.println("scaleOfRiceWater: " + String(scaleOfRiceWater));
 }
