@@ -23,9 +23,9 @@ void setup(){
 void loop() {
   if(WiFi.status() == WL_CONNECTED){  
       getHttpData();
+      delay(5000);
       getArduinoData();
   }
-  delay(30000);
 }
 
 void getHttpData(){ 
@@ -71,29 +71,28 @@ void postHttpData(int id, int isDoneCooking, boolean isRiceLevelLow, boolean isW
 void getArduinoData(){
   String payloadString = "";
    
-  // String firstParam = "\"Id\":" + String(1);
-  // String secondParam = ",\"IsDoneCooking\":" + String(2);
-  // String thirdParam = ",\"IsRiceLevelLow\":" + String(false);
-  // String fourthParam = ",\"IsWaterLevelLow\":" + String(false);
-  // String fifthParam = ",\"RiceDistance\":" + String(5.00);
-  // String sixthParam = ",\"WaterDistance\":" + String(5.00);
+//  String firstParam = "\"Id\":" + String(1);
+//  String secondParam = ",\"IsDoneCooking\":" + String(2);
+//  String thirdParam = ",\"IsRiceLevelLow\":" + String(false);
+//  String fourthParam = ",\"IsWaterLevelLow\":" + String(false);
+//  String fifthParam = ",\"RiceDistance\":" + String(5.00);
+//  String sixthParam = ",\"WaterDistance\":" + String(5.00);
+//
+//  payloadString = String("[{"+ firstParam +  secondParam + thirdParam + fourthParam + fifthParam + sixthParam + "}]");
+//
+//  separateKeyValueJSONPairs(payloadString);
 
-  // payloadString = String("[{"+ firstParam +  secondParam + thirdParam + fourthParam + fifthParam + sixthParam + "}]");
-  // separateKeyValueJSONPairs(payloadString);
-  // delay(2000);
-  
   if(Serial.available()){
     payloadString =  Serial.readString();
-
+    Serial.print(payloadString);
     if(payloadString.length() > 1){
       separateKeyValueJSONPairs(payloadString);
-      delay(2000);
     }
   }
 }
 
 void separateKeyValueJSONPairs(String payload){
-  StaticJsonDocument<1000> doc;
+  StaticJsonDocument<256> doc;
 
   DeserializationError err = deserializeJson(doc, payload);
 

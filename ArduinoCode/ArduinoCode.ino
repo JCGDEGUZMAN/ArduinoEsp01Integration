@@ -11,16 +11,16 @@ double scaleOfRiceWater = 0.00;
 void setup() {
   Serial.begin(9600);
   mySerial.begin(9600);
-  delay(5000);
+  delay(1500);
 }
 
 void loop() {
- if(id == 0)
- {
-     getHttpData();
- }
-
-  if(id > 0){
+  if(id == 0)
+  {
+       getHttpData();
+  }
+  if(id > 0)
+  {
       postHttpData();
   }
 }
@@ -29,19 +29,19 @@ void getHttpData(){
     String payloadString = "";
     if(mySerial.available()){
       payloadString =  mySerial.readString();
-
+      Serial.println(payloadString);
       if(payloadString.length() > 1){
         separateKeyValueJSONPairs(payloadString);
-        delay(2000);
       }
     }
   }
   
 void postHttpData(){
+  delay(5000);
   String payloadString = "";
 
   String firstParam = "\"Id\":" + String(id);
-  String secondParam = ",\"IsDoneCooking\":" + String(1);
+  String secondParam = ",\"IsDoneCooking\":" + String(4);
   String thirdParam = ",\"IsRiceLevelLow\":" + String(false);
   String fourthParam = ",\"IsWaterLevelLow\":" + String(false);
   String fifthParam = ",\"RiceDistance\":" + String(5.00);
@@ -53,7 +53,7 @@ void postHttpData(){
 }
 
 void separateKeyValueJSONPairs(String payload){
-  StaticJsonDocument<1000> doc;
+  StaticJsonDocument<256> doc;
 
   DeserializationError err = deserializeJson(doc, payload);
 
@@ -68,4 +68,6 @@ void separateKeyValueJSONPairs(String payload){
   cupsOfRiceSelected = doc[0]["CupsOfRice"];
   riceTypeSelected = doc[0]["RiceType"];
   scaleOfRiceWater = doc[0]["RiceWaterScale"];
+
+  delay(5000);
 }
