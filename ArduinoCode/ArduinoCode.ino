@@ -15,7 +15,10 @@ void setup() {
 }
 
 void loop() {
-  getHttpData();
+ if(id == 0)
+ {
+     getHttpData();
+ }
 
   if(id > 0){
       postHttpData();
@@ -26,7 +29,7 @@ void getHttpData(){
     String payloadString = "";
     if(mySerial.available()){
       payloadString =  mySerial.readString();
-      
+
       if(payloadString.length() > 1){
         separateKeyValueJSONPairs(payloadString);
         delay(2000);
@@ -55,7 +58,7 @@ void separateKeyValueJSONPairs(String payload){
   DeserializationError err = deserializeJson(doc, payload);
 
   if (err) {
-    Serial.print(F("deserializeJson() failed with code "));
+    Serial.print(F("ARDUINO deserializeJson() failed with code "));
     Serial.println(err.c_str());
     return;
   }

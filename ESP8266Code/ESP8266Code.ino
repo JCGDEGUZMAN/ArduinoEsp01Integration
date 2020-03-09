@@ -2,28 +2,11 @@
 #include <ESP8266HTTPClient.h>
 #include<SoftwareSerial.h>
 #include <ArduinoJson.h>
-//SoftwareSerial Serial2(7,2);
 
 const char* ssid     = "JCGDeGuzman";
 const char* password = "JCGDeGuzman@15";
 
-int id = 0;
-int isDoneCooking = 0;
-boolean isRiceLevelLow = 0;
-boolean isWaterLevelLow = 0;
-double riceDistance = 0.00;
-double waterDistance = 0.00;
-  
 const char* view_host = "http://restapiarc.herokuapp.com/api/configurations.php";
-
-String firstUrl = "id="+String(id);
-String secondUrl = "&is_done_cooking="+String(isDoneCooking);
-String thirdUrl = "&is_rice_level_low="+String(isRiceLevelLow);
-String fourthUrl = "&is_water_level_low="+String(isWaterLevelLow);
-String fifthUrl = "&rice_distance="+String(riceDistance);
-String sixthUrl = "&water_distance="+String(waterDistance);
-
-String update_url = "http://restapiarc.herokuapp.com/api/update-configuration.php?"+firstUrl+secondUrl+thirdUrl+fourthUrl+fifthUrl+sixthUrl;
 
 void setup(){
   Serial.begin(9600);
@@ -61,10 +44,19 @@ void getHttpData(){
   http.end();
 }
 
-void postHttpData(){
+void postHttpData(int id, int isDoneCooking, boolean isRiceLevelLow, boolean isWaterLevelLow, double riceDistance, double waterDistance){
   HTTPClient http;
   int httpCode = 0;
   String payload = "";
+
+  String firstUrl = "id="+String(id);
+  String secondUrl = "&is_done_cooking="+String(isDoneCooking);
+  String thirdUrl = "&is_rice_level_low="+String(isRiceLevelLow);
+  String fourthUrl = "&is_water_level_low="+String(isWaterLevelLow);
+  String fifthUrl = "&rice_distance="+String(riceDistance);
+  String sixthUrl = "&water_distance="+String(waterDistance);
+  
+  String update_url = "http://restapiarc.herokuapp.com/api/update-configuration.php?"+firstUrl+secondUrl+thirdUrl+fourthUrl+fifthUrl+sixthUrl;
 
   http.begin(update_url);
   httpCode = http.GET();
@@ -78,7 +70,18 @@ void postHttpData(){
 
 void getArduinoData(){
   String payloadString = "";
+   
+  // String firstParam = "\"Id\":" + String(1);
+  // String secondParam = ",\"IsDoneCooking\":" + String(2);
+  // String thirdParam = ",\"IsRiceLevelLow\":" + String(false);
+  // String fourthParam = ",\"IsWaterLevelLow\":" + String(false);
+  // String fifthParam = ",\"RiceDistance\":" + String(5.00);
+  // String sixthParam = ",\"WaterDistance\":" + String(5.00);
 
+  // payloadString = String("[{"+ firstParam +  secondParam + thirdParam + fourthParam + fifthParam + sixthParam + "}]");
+  // separateKeyValueJSONPairs(payloadString);
+  // delay(2000);
+  
   if(Serial.available()){
     payloadString =  Serial.readString();
 
@@ -95,19 +98,19 @@ void separateKeyValueJSONPairs(String payload){
   DeserializationError err = deserializeJson(doc, payload);
 
   if (err) {
-    Serial.print(F("deserializeJson() failed with esp code "));
+    Serial.print(F("ESP8266 deserializeJson() failed with esp code "));
     Serial.println(err.c_str());
     return;
   }
   
-  id = doc[0]["Id"];
-  isDoneCooking = doc[0]["IsDoneCooking"];
-  isRiceLevelLow = doc[0]["IsRiceLevelLow"];
-  isWaterLevelLow = doc[0]["IsWaterLevelLow"];
-  riceDistance = doc[0]["RiceDistance"];
-  waterDistance = doc[0]["WaterDistance"];
-
+  int id = doc[0]["Id"];
+  int isDoneCooking = doc[0]["IsDoneCooking"];
+  boolean isRiceLevelLow = doc[0]["IsRiceLevelLow"];
+  boolean isWaterLevelLow = doc[0]["IsWaterLevelLow"];
+  double riceDistance = doc[0]["RiceDistance"];
+  double waterDistance = doc[0]["WaterDistance"];
+ 
   if(id > 0){
-    postHttpData();
+    postHttpData(id, isDoneCooking, isRiceLevelLow, isWaterLevelLow, riceDistance, waterDistance);
   }
 }
