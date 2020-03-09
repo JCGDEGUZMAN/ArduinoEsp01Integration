@@ -84,7 +84,7 @@ void getArduinoData(){
 
   if(Serial.available()){
     payloadString =  Serial.readString();
-    Serial.print(payloadString);
+
     if(payloadString.length() > 1){
       separateKeyValueJSONPairs(payloadString);
     }

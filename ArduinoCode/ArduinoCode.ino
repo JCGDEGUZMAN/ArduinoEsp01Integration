@@ -29,7 +29,7 @@ void getHttpData(){
     String payloadString = "";
     if(mySerial.available()){
       payloadString =  mySerial.readString();
-      Serial.println(payloadString);
+
       if(payloadString.length() > 1){
         separateKeyValueJSONPairs(payloadString);
       }
